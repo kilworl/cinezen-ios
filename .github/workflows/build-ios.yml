@@ -1,0 +1,45 @@
+name: Build CineZen iOS (.ipa)
+
+on:
+  push:
+    branches: [ "main", "master" ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build & Package iOS App
+    runs-on: macos-14
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Select Xcode
+        run: sudo xcode-select -switch /Applications/Xcode_15.4.app/Contents/Developer
+
+      - name: Build Archive
+        run: |
+          xcodebuild archive \
+            -project CineZen.xcodeproj \
+            -scheme CineZen \
+            -configuration Release \
+            -sdk iphoneos \
+            -archivePath build/CineZen.xcarchive \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGN_IDENTITY=""
+
+      - name: Package .ipa for Sideloading
+        run: |
+          mkdir -p build/Payload
+          cp -r build/CineZen.xcarchive/Products/Applications/CineZen.app build/Payload/
+          cd build
+          zip -r CineZen.ipa Payload
+          cd ..
+
+      - name: Upload .ipa Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: CineZen-iOS
+          path: build/CineZen.ipa
+          retention-days: 14
