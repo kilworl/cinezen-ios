@@ -5,13 +5,10 @@ struct ContentView: View {
     let appUrl = URL(string: "https://clean-stream-app.vercel.app")!
 
     var body: some View {
-        ZStack {
-            Color(red: 7/255, green: 10/255, blue: 18/255)
-                .ignoresSafeArea()
-            
-            WebViewContainer(url: appUrl)
-                .ignoresSafeArea(.all, edges: .bottom)
-        }
+        WebViewContainer(url: appUrl)
+            .edgesIgnoringSafeArea(.all)
+            .ignoresSafeArea(.all)
+            .background(Color(red: 7/255, green: 10/255, blue: 18/255))
     }
 }
 
@@ -128,12 +125,17 @@ struct WebViewContainer: UIViewRepresentable {
             }
         }
 
+        if #available(iOS 15.4, *) {
+            config.preferences.isElementFullscreenEnabled = true
+        }
+
         let webView = WKWebView(frame: .zero, configuration: config)
         webView.uiDelegate = context.coordinator
         webView.navigationDelegate = context.coordinator
         webView.backgroundColor = UIColor(red: 7/255, green: 10/255, blue: 18/255, alpha: 1)
         webView.isOpaque = false
         webView.scrollView.bounces = true
+        webView.scrollView.contentInsetAdjustmentBehavior = .never
 
         let request = URLRequest(url: url)
         webView.load(request)
