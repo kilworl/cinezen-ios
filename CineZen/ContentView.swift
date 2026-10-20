@@ -8,7 +8,7 @@ struct ContentView: View {
         WebViewContainer(url: appUrl)
             .edgesIgnoringSafeArea(.all)
             .ignoresSafeArea(.all)
-            .background(Color(red: 7/255, green: 10/255, blue: 18/255))
+            .background(Color(red: 20/255, green: 20/255, blue: 20/255))
     }
 }
 
@@ -132,10 +132,11 @@ struct WebViewContainer: UIViewRepresentable {
         let webView = WKWebView(frame: .zero, configuration: config)
         webView.uiDelegate = context.coordinator
         webView.navigationDelegate = context.coordinator
-        webView.backgroundColor = UIColor(red: 7/255, green: 10/255, blue: 18/255, alpha: 1)
+        webView.backgroundColor = UIColor(red: 20/255, green: 20/255, blue: 20/255, alpha: 1)
         webView.isOpaque = false
         webView.scrollView.bounces = true
         webView.scrollView.contentInsetAdjustmentBehavior = .never
+        webView.allowsBackForwardNavigationGestures = true
 
         let request = URLRequest(url: url)
         webView.load(request)
